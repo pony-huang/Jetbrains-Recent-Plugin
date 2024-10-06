@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin.Properties {
+namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,7 +61,7 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin.Properties {
         }
         
         /// <summary>
-        ///   查找类似 Jetbrains-Recent-Plugin plugin 的本地化字符串。
+        ///   查找类似 JetBrains-Recent-Plugin plugin 的本地化字符串。
         /// </summary>
         internal static string plugin_description {
             get {
@@ -70,7 +70,7 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin.Properties {
         }
         
         /// <summary>
-        ///   查找类似 Jetbrains-Recent-Plugin 的本地化字符串。
+        ///   查找类似 JetBrains-Recent-Plugin 的本地化字符串。
         /// </summary>
         internal static string plugin_name {
             get {
@@ -79,7 +79,7 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin.Properties {
         }
         
         /// <summary>
-        ///   查找类似 Jetbrains-Recent-Plugin settings 的本地化字符串。
+        ///   查找类似 JetBrains-Recent-Plugin settings 的本地化字符串。
         /// </summary>
         internal static string plugin_setting {
             get {

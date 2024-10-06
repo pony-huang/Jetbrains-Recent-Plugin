@@ -4,8 +4,8 @@
         <useWPF>true</useWPF>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin</AssemblyName>
-        <RootNamespace>Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin</RootNamespace>
+        <AssemblyName>Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin</AssemblyName>
+        <RootNamespace>Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin</RootNamespace>
         <Version>$([System.Text.RegularExpressions.Regex]::Match([System.IO.File]::ReadAllText('.\plugin.json'), '"Version": "(\S+)"').Groups[1].Value)</Version>
         <Platforms>x64;ARM64</Platforms>
         <Title></Title>

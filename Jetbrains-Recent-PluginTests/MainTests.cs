@@ -1,4 +1,4 @@
-﻿using Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin;
+﻿using Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin.Tests
+namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Tests
 {
     [TestClass()]
     public class MainTests

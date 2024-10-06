@@ -1,7 +1,7 @@
 Push-Location
 Set-Location $PSScriptRoot
 
-$name = 'Jetbrains_Recent_Plugin'
+$name = 'JetBrains_Recent_Plugin'
 $assembly = "Community.PowerToys.Run.Plugin.$name"
 $version = "v$((Get-Content ./plugin.json | ConvertFrom-Json).Version)"
 $archs = @('x64', 'arm64')

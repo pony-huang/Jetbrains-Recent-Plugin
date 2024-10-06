@@ -3,12 +3,12 @@
   "ActionKeyword": "plug",
   "Disabled": false,
   "IsGlobal": false,
-  "Name": "Jetbrains-Recent-Plugin",
+  "Name": "JetBrains-Recent-Plugin",
   "Author": "",
   "Version": "1.0.0",
   "Language": "csharp",
   "Website": "",
-  "ExecuteFileName": "Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin.dll",
-  "IcoPathDark": "Images\\Jetbrains_Recent_Plugin.dark.png",
-  "IcoPathLight": "Images\\Jetbrains_Recent_Plugin.light.png"
+  "ExecuteFileName": "Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.dll",
+  "IcoPathDark": "Images\\JetBrains_Recent_Plugin.dark.png",
+  "IcoPathLight": "Images\\JetBrains_Recent_Plugin.light.png"
 }

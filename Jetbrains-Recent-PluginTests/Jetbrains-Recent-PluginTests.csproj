@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
-    <RootNamespace>Jetbrains_Recent_PluginTests</RootNamespace>
+    <RootNamespace>JetBrains_Recent_PluginTests</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Jetbrains-Recent-Plugin\Jetbrains-Recent-Plugin.csproj" />
+    <ProjectReference Include="..\JetBrains-Recent-Plugin\JetBrains-Recent-Plugin.csproj" />
   </ItemGroup>
 
   <ItemGroup>

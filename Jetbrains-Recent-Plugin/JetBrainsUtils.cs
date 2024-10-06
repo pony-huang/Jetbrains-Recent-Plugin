@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml;
 using Wox.Plugin.Logger;
 
-namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
+namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 {
     public class RecentProjectInfo
     {
@@ -136,7 +136,8 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
                         var ProductName = dir.Substring(dir.LastIndexOf("\\") + 1);
                         var DevToolName = "";
 
-                        foreach (string IT in ICON_TYPE) {
+                        foreach (string IT in ICON_TYPE)
+                        {
                             if (ProductName.Contains(IT, StringComparison.OrdinalIgnoreCase))
                             {
                                 DevToolName = IT;
@@ -218,56 +219,37 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
         }
 
 
-        public static void OpenProject(string path, string jetBrainsIDEPath)
+        public static bool OpenProject(string path, string jetBrainsIDEPath, bool runAsAdmin = false)
         {
-
             if (!File.Exists(jetBrainsIDEPath))
             {
                 Log.Info($"JetBrains IDE executable not found at {jetBrainsIDEPath}", null);
-                return;
+                return false;
             }
-
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     FileName = jetBrainsIDEPath,
-                    Arguments = $"\"{path}\"", // Use quotes in case there are spaces in the path
-                    UseShellExecute = true // Use shell execute to open the application
+                    Arguments = $"\"{path}\"",
+                    UseShellExecute = true
                 };
 
+                //  runAsAdmin 
+                if (runAsAdmin)
+                {
+                    startInfo.Verb = "runas";
+                }
+
                 Process.Start(startInfo);
+                return true;
             }
             catch (Exception ex)
             {
                 Log.Info($"Error opening project: {ex.Message}", null);
             }
-
+            return false;
         }
-
-        public static string GetAlphaPrefix(string s)
-        {
-            string prefix = "";
-            foreach (char c in s)
-            {
-                if (char.IsLetter(c))
-                {
-                    prefix += c;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return prefix;
-        }
-
-
-        public static bool containt(string sub, string source)
-        {
-            return source.Contains(sub, StringComparison.OrdinalIgnoreCase);
-        }
-
     }
 
 }

@@ -8,8 +8,8 @@ gsudo {
 
 	# change this to your PowerToys installation path
 	$ptPath = 'C:\Program Files\PowerToys'
-	$projectName = 'Jetbrains-Recent-Plugin'
-	$safeProjectName = 'Jetbrains_Recent_Plugin'
+	$projectName = 'JetBrains-Recent-Plugin'
+	$safeProjectName = 'JetBrains_Recent_Plugin'
 	$debug = '.\bin\x64\Debug\net8.0-windows'
 	$dest = "$env:LOCALAPPDATA\Microsoft\PowerToys\PowerToys Run\Plugins\$projectName"
 	$files = @(

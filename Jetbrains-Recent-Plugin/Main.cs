@@ -1,19 +1,11 @@
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using Wox.Infrastructure;
 using Wox.Plugin;
 using Wox.Plugin.Logger;
 
-namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
+namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 {
     public class Main : IPlugin, IPluginI18n, IContextMenu, ISettingProvider, IReloadable, IDisposable, IDelayedExecutionPlugin
     {
@@ -35,9 +27,11 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
         // TODO: remove dash from ID below and inside plugin.json
         public static string PluginID => "e4df183d-1167-4fe0-ab12-cdfbff053e57";
 
-        private Settings _settings = new ();
+        private Settings _settings = new();
 
         private Dictionary<string, string> _product;
+
+        private ContextMenuLoader _contextMenuLoader;
 
         // TODO: add additional options (optional)
         public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
@@ -61,45 +55,7 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
         // TODO: return context menus for each Result (optional)
         public List<ContextMenuResult> LoadContextMenus(Result selectedResult)
         {
-            Log.Info("LoadContextMenus", GetType());
-
-            var contextMenus = new List<ContextMenuResult>();
-
-            contextMenus.Add(new ContextMenuResult
-            {
-                PluginName = Name,
-                Title = "Copy (Enter)",
-                FontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets",
-                Glyph = "\xE8C8", // Copy
-                AcceleratorKey = Key.Enter,
-                Action = _ => RuntimeUtils.RunCmd(""),
-            });
-
-
-            contextMenus.Add(new ContextMenuResult
-            {
-                PluginName = Name,
-                Title = "Run by Admin (Ctrl+Enter)",
-                FontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets",
-                Glyph = "\xE7EF", // Admin
-                AcceleratorKey = Key.Enter,
-                AcceleratorModifiers = ModifierKeys.Control,
-                Action = _ => RuntimeUtils.RunCmd(""),
-            });
-
-            contextMenus.Add(new ContextMenuResult
-            {
-                PluginName = Name,
-                Title = "Run by OtherUser (Ctrl+Enter)",
-                FontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets",
-                Glyph = "\xE7EE", // OtherUser
-                AcceleratorKey = Key.Enter,
-                AcceleratorModifiers = ModifierKeys.Control,
-                Action = _ => RuntimeUtils.RunCmd(""),
-            });
-
-            return contextMenus;
-
+            return _contextMenuLoader.LoadContextMenus(selectedResult);
         }
 
         private static bool CopyToClipboard(string? value)
@@ -149,6 +105,12 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
 
         private Result CreateResultFromProject(RecentProjectInfo rp)
         {
+            string Cmd = "";
+            if (_product.ContainsKey(rp.ProductName))
+            {
+                Cmd = _product[rp.ProductName];
+            }
+
             return new Result
             {
                 Title = rp.ProjectPath,
@@ -157,15 +119,19 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
                 IcoPath = $"Images/{rp.DeveloperTool}.svg",
                 Action = action =>
                 {
-                    Log.Info($"Open Project,Product = {rp.ProductName}, path = {rp.ProjectPath}", GetType());
-                    if (_product.ContainsKey(rp.ProductName))
+                    if (!Cmd.Equals(""))
                     {
-                        var Cmd = _product[rp.ProductName];
                         JetBrainsUtils.OpenProject(rp.ProjectPath, Cmd);
-
                     }
+
                     return true;
                 },
+                ContextData = new SearchResult()
+                {
+                    ProductName = rp.ProductName,
+                    ProjectPath = rp.ProjectPath,
+                    JetBrainsCmdPath = Cmd
+                }
             };
         }
 
@@ -190,6 +156,7 @@ namespace Community.PowerToys.Run.Plugin.Jetbrains_Recent_Plugin
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _context.API.ThemeChanged += OnThemeChanged;
             _product = JetBrainsUtils.FindJetBrainsProducts();
+            _contextMenuLoader = new ContextMenuLoader(context);
             UpdateIconPath(_context.API.GetCurrentTheme());
         }
 
