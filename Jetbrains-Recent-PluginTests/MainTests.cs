@@ -1,19 +1,11 @@
-﻿namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Tests
+﻿
+
+
+namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Tests
 {
     [TestClass()]
     public class MainTests
     {
-
-        [TestMethod()]
-        public void UserLocalTest()
-        {
-
-            foreach (var data in JetBrainsUtils.FindJetBrainsProducts())
-            {
-                Console.WriteLine(data);
-            }
-
-        }
 
         [TestMethod()]
         public void UserRoamingTest()
@@ -56,65 +48,7 @@
 
         }
 
-        [TestMethod()]
-        public void UpdateSettingsTest()
-        {
-            Assert.Fail();
-        }
 
-        [TestMethod()]
-        public void LoadContextMenusTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void QueryTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void QueryTest1()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void InitTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetTranslatedPluginTitleTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetTranslatedPluginDescriptionTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void CreateSettingPanelTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void ReloadDataTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void DisposeTest()
-        {
-            Assert.Fail();
-        }
     }
 
 }
