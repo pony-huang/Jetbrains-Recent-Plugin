@@ -25,7 +25,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         public string Description => Properties.Resources.plugin_description;
 
         // TODO: remove dash from ID below and inside plugin.json
-        public static string PluginID => "e4df183d-1167-4fe0-ab12-cdfbff053e57";
+        public static string PluginID => "5BF8F7B836D50007D3139BDF93D41B9D";
 
         private Settings _settings = new();
 
@@ -36,20 +36,21 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         // TODO: add additional options (optional)
         public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
         {
-            //new PluginAdditionalOption()
-            //{
-            //    Key = nameof(_settings.Default),
-            //    DisplayLabel = "Count spaces",
-            //    DisplayDescription = "Count spaces as characters",
-            //    PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
-            //    Value = (bool)_setting.Default
-            //}
+           new()
+            {
+                Key = nameof(CountSpaces),
+                DisplayLabel = "Count spaces",
+                DisplayDescription = "Count spaces as characters",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+                Value = CountSpaces,
+            }
         };
+
+        private bool CountSpaces { get; set; }
 
         public void UpdateSettings(PowerLauncherPluginSettings settings)
         {
-            //_setting = settings?.AdditionalOptions?.FirstOrDefault(x => x.Key == Setting)?.Value ?? false;
-            // TODO
+            CountSpaces = settings.AdditionalOptions.SingleOrDefault(x => x.Key == nameof(CountSpaces))?.Value ?? false;
         }
 
         // TODO: return context menus for each Result (optional)
@@ -79,10 +80,16 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             var results = new List<Result>();
 
             var recentProjects = JetBrainsUtils.FindJetBrainsRecentProjects();
-            // empty query
+
+            // sort by activationTimestamp
+            recentProjects.Sort((x, y) => GetValueOrDefault(y.Options, "activationTimestamp", 0).CompareTo(GetValueOrDefault(x.Options, "activationTimestamp", 0)));
+
+
+            var distinctRecentProjects = recentProjects.GroupBy(p => p.ProjectPath).Select(g => g.First()).ToList();
+
             if (string.IsNullOrEmpty(search))
             {
-                foreach (var rp in recentProjects)
+                foreach (var rp in distinctRecentProjects)
                 {
                     results.Add(CreateResultFromProject(rp));
                 }
@@ -91,7 +98,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             }
 
             // Search by project path
-            var filteredProjects = recentProjects
+            var filteredProjects = distinctRecentProjects
                 .Where(rp => rp.ProjectPath.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
 
@@ -110,13 +117,16 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             {
                 Cmd = _product[rp.ProductName];
             }
+            var timestamp = GetValueOrDefault(rp.Options, "activationTimestamp", 0);
+            DateTime dateTime = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime;
+            string formattedDate = dateTime.ToString("yy-MM-dd HH:mm:ss");
 
             return new Result
             {
                 Title = rp.ProjectPath,
-                SubTitle = rp.ProjectPath,
+                SubTitle = $"Last Open: {formattedDate}",
                 QueryTextDisplay = string.Empty,
-                IcoPath = $"Images/{rp.DeveloperTool}.svg",
+                IcoPath = $"Images/{rp.DeveloperTool}_48.png",
                 Action = action =>
                 {
                     if (!Cmd.Equals(""))
@@ -133,6 +143,27 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     JetBrainsCmdPath = Cmd
                 }
             };
+        }
+
+        private long GetValueOrDefault(Dictionary<string, string> dict, string key, long defaultValue)
+        {
+            if (dict.TryGetValue(key, out string value))
+            {
+                try
+                {
+                    long number = long.Parse(value);
+                    return number;
+                }
+                catch (FormatException)
+                {
+                    Log.Error($"The string is not in a valid format. value: {value}", GetType());
+                }
+                catch (OverflowException)
+                {
+                    Log.Error($"The number is too large or too small for a long. value: {value}", GetType());
+                }
+            }
+            return defaultValue;
         }
 
         // TODO: return delayed query results (optional)
@@ -180,11 +211,11 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             Log.Info("Update Icon Path", GetType());
             if (theme == Theme.Light || theme == Theme.HighContrastWhite)
             {
-                _iconPath = "Images/idea.svg";
+                _iconPath = "Images/Icon.light.png";
             }
             else
             {
-                _iconPath = "Images/idea.svg";
+                _iconPath = "Images/Icon.dark.png";
             }
         }
 
