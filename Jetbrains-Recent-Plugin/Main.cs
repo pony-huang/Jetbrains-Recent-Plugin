@@ -33,27 +33,27 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         private ContextMenuLoader _contextMenuLoader;
 
-        // TODO: add additional options (optional)
+        // add additional options (optional)
         public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
         {
-           new()
-            {
-                Key = nameof(CountSpaces),
-                DisplayLabel = "Count spaces",
-                DisplayDescription = "Count spaces as characters",
-                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
-                Value = CountSpaces,
-            }
+           //new()
+           // {
+           //     Key = nameof(PrefixSearch),
+           //     DisplayLabel = "Prefix Search",
+           //     DisplayDescription = "JetBrains Product Prefix Search",
+           //     PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+           //     Value = PrefixSearch,
+           // }
         };
 
-        private bool CountSpaces { get; set; }
+        private bool PrefixSearch { get; set; }
 
         public void UpdateSettings(PowerLauncherPluginSettings settings)
         {
-            CountSpaces = settings.AdditionalOptions.SingleOrDefault(x => x.Key == nameof(CountSpaces))?.Value ?? false;
+            //PrefixSearch = settings.AdditionalOptions.SingleOrDefault(x => x.Key == nameof(PrefixSearch))?.Value ?? false;
         }
 
-        // TODO: return context menus for each Result (optional)
+        // return context menus for each Result (optional)
         public List<ContextMenuResult> LoadContextMenus(Result selectedResult)
         {
             return _contextMenuLoader.LoadContextMenus(selectedResult);
@@ -69,7 +69,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             return true;
         }
 
-        // TODO: return query results
+        // return query results
         public List<Result> Query(Query query)
         {
             ArgumentNullException.ThrowIfNull(query);
@@ -126,12 +126,12 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                 Title = rp.ProjectPath,
                 SubTitle = $"Last Open: {formattedDate}",
                 QueryTextDisplay = string.Empty,
-                IcoPath = $"Images/{rp.DeveloperTool}_48.png",
+                IcoPath = $"Images/{rp.DeveloperTool}.png",
                 Action = action =>
                 {
                     if (!Cmd.Equals(""))
                     {
-                        JetBrainsUtils.OpenProject(rp.ProjectPath, Cmd);
+                        Helper.OpenProject(rp.ProjectPath, Cmd);
                     }
 
                     return true;
@@ -166,7 +166,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             return defaultValue;
         }
 
-        // TODO: return delayed query results (optional)
+        // return delayed query results (optional)
         public List<Result> Query(Query query, bool delayedExecution)
         {
             ArgumentNullException.ThrowIfNull(query);

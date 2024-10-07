@@ -11,9 +11,6 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         private readonly PluginInitContext _context;
 
-        // Extensions for adding run as admin and run as other user context menu item for applications
-        private readonly string[] appExtensions = { ".exe", ".bat", ".appref-ms", ".lnk" };
-
         public ContextMenuLoader(PluginInitContext context)
         {
             _context = context;
@@ -76,7 +73,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     {
                         Task.Run(() =>
                         {
-                            JetBrainsUtils.OpenProject(record.ProjectPath, record.JetBrainsCmdPath, true);
+                            Helper.OpenProject(record.ProjectPath, record.JetBrainsCmdPath, true);
                         });
                         return true;
                     }
@@ -106,7 +103,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     {
                         Task.Run(() =>
                         {
-                            JetBrainsUtils.OpenProject(record.ProjectPath, record.JetBrainsCmdPath);
+                            Helper.OpenProject(record.ProjectPath, record.JetBrainsCmdPath);
                         });
                         return true;
                     }

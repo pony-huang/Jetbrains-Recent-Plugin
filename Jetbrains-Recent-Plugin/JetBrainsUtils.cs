@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using Wox.Plugin.Logger;
@@ -39,8 +38,9 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
     public class JetBrainsUtils
     {
 
-        private static List<string> PRODUCERS = new List<string>(new string[] { "idea64.exe", "pycharm64.exe", "clion64.exe", "goland64.exe" });
-        private static List<string> ICON_TYPE = new List<string>(new string[] { "idea", "pycharm", "clion", "goland" });
+        private static List<string> PRODUCERS = new List<string>(new string[] { "idea64.exe", "pycharm64.exe", "clion64.exe", "goland64.exe", "rider64.exe" });
+
+        private static List<string> ICON_TYPE = new List<string>(new string[] { "idea", "pycharm", "clion", "goland", "rider" });
 
 
 
@@ -218,38 +218,6 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         }
 
-
-        public static bool OpenProject(string path, string jetBrainsIDEPath, bool runAsAdmin = false)
-        {
-            if (!File.Exists(jetBrainsIDEPath))
-            {
-                Log.Info($"JetBrains IDE executable not found at {jetBrainsIDEPath}", null);
-                return false;
-            }
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    FileName = jetBrainsIDEPath,
-                    Arguments = $"\"{path}\"",
-                    UseShellExecute = true
-                };
-
-                //  runAsAdmin 
-                if (runAsAdmin)
-                {
-                    startInfo.Verb = "runas";
-                }
-
-                Process.Start(startInfo);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Info($"Error opening project: {ex.Message}", null);
-            }
-            return false;
-        }
     }
 
 }
