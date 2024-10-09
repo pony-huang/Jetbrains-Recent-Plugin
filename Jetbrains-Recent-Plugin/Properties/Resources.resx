@@ -118,15 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="plugin_description" xml:space="preserve">
-    <value>JetBrains-Recent-Plugin plugin</value>
+    <value>A PowerToys Run plugin that allows users to quickly access and open recent projects from JetBrains IDEs.</value>
   </data>
   <data name="plugin_name" xml:space="preserve">
-    <value>JetBrains-Recent-Plugin</value>
-  </data>
-  <data name="plugin_setting" xml:space="preserve">
-    <value>JetBrains-Recent-Plugin settings</value>
-  </data>
-  <data name="plugin_setting_jetbrains_toolbox" xml:space="preserve">
-    <value>Default CMD</value>
+    <value>JetBrains Recent Plugin</value>
   </data>
 </root>

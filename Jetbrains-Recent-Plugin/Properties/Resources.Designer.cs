@@ -77,23 +77,5 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Properties {
                 return ResourceManager.GetString("plugin_name", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   查找类似 JetBrains-Recent-Plugin settings 的本地化字符串。
-        /// </summary>
-        internal static string plugin_setting {
-            get {
-                return ResourceManager.GetString("plugin_setting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   查找类似 Default CMD 的本地化字符串。
-        /// </summary>
-        internal static string plugin_setting_jetbrains_toolbox {
-            get {
-                return ResourceManager.GetString("plugin_setting_jetbrains_toolbox", resourceCulture);
-            }
-        }
     }
 }
