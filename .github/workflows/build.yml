@@ -17,24 +17,35 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Build
-      run: dotnet build --no-restore
+      - name: Build
+        run: dotnet build --no-restore
 
-    - name: Build JetBrains-Recent-Plugin
-      run: |
-        dotnet build .\JetBrains-Recent-Plugin\project\ /p:Platform=${{matrix.platform}}
-        dotnet build .\JetBrains-Recent-Plugin\solution\ /p:Platform=${{matrix.platform}}
+      - name: Build JetBrains-Recent-Plugin
+        run: |
+          dotnet build .\JetBrains-Recent-Plugin\project\ /p:Platform=${{matrix.platform}}
+          dotnet build .\JetBrains-Recent-Plugin\solution\ /p:Platform=${{matrix.platform}}
 
-    # - name: Test JetBrains-Recent-Plugin
-    #   if: ${{matrix.platform == 'x64'}}
-    #   run: dotnet test .\JetBrains-Recent-Plugin\solution\ /p:Platform=${{matrix.platform}}
+      - name: Test JetBrains-Recent-Plugin
+        if: ${{matrix.platform == 'x64'}}
+        run: dotnet test .\JetBrains-Recent-Plugin\solution\ /p:Platform=${{matrix.platform}}
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p artifacts
+          cp -r .\JetBrains-Recent-Plugin\solution\bin\Release\net8.0\* artifacts/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: jetbrains-recent-plugin-${{ matrix.platform }}
+          path: artifacts/

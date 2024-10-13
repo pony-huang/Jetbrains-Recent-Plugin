@@ -136,11 +136,11 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                         var ProductName = dir.Substring(dir.LastIndexOf("\\") + 1);
                         var DevToolName = "";
 
-                        foreach (string IT in ICON_TYPE)
+                        foreach (string value in ICON_TYPE)
                         {
-                            if (ProductName.Contains(IT, StringComparison.OrdinalIgnoreCase))
+                            if (ProductName.Contains(value, StringComparison.OrdinalIgnoreCase))
                             {
-                                DevToolName = IT;
+                                DevToolName = value;
                                 break;
                             }
                         }
@@ -221,3 +221,4 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
     }
 
 }
+
