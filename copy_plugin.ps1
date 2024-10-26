@@ -10,7 +10,7 @@ gsudo {
 	$ptPath = 'C:\Program Files\PowerToys'
 	$projectName = 'JetBrains-Recent-Plugin'
 	$safeProjectName = 'JetBrains_Recent_Plugin'
-	$debug = '.\JetBrains-Recent-Plugin\bin\x64\Debug\net8.0-windows'
+	$debug = '.\JetBrains-Recent-Plugin\bin\x64\Release\net8.0-windows'
 	$dest = "$env:LOCALAPPDATA\Microsoft\PowerToys\PowerToys Run\Plugins\$projectName"
 	$files = @(
 		"Community.PowerToys.Run.Plugin.$safeProjectName.deps.json",

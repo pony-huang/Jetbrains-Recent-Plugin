@@ -15,3 +15,8 @@ Simple [PowerToys Run](https://learn.microsoft.com/windows/powertoys/run) experi
 ![Search](./images/Search.png)
 
 ![Plugin](./images/Plugin.png)
+
+
+## Thanks
+
+[Creating custom PowerToys Run plugins](https://conductofcode.io/post/creating-custom-powertoys-run-plugins/)

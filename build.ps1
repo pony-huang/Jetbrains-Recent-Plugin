@@ -2,8 +2,8 @@
 Push-Location -Path $PSScriptRoot
 
 # Project name and safe name
-$workspace = "Community.PowerToys.Run.Plugin.JetBrainsRecents"
-$projectName = "Community.PowerToys.Run.Plugin.JetBrainsRecents"
+$workspace = "Jetbrains-Recent-Plugin"
+$projectName = "Jetbrains-Recent-Plugin"
 $safeProjectName = "JetBrains_Recent_Plugin"
 
 # Temporary directory for builds
@@ -51,9 +51,9 @@ foreach ($configuration in $configurations) {
         # Copy items to temporary directory
         Write-Host "Copy $items"
         Copy-Item $items "$tempDir" -Recurse -Force -ErrorAction Stop
+        
         # Define output zip file name
         $outputZip = "./$($projectName)/out/$($projectName)-$($configuration)-$platform.zip"
-
         # Compress the directory
         Compress-Archive -Path "$tempDir/*" -DestinationPath $outputZip -Force
     }
