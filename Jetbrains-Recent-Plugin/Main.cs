@@ -24,7 +24,6 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         public string Description => Properties.Resources.plugin_description;
 
-        // TODO: remove dash from ID below and inside plugin.json
         public static string PluginID => "5BF8F7B836D50007D3139BDF93D41B9D";
 
         private Settings _settings = new();
