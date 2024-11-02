@@ -38,7 +38,7 @@ jobs:
       - name: Prepare artifact
         run: |
           Remove-Item -Path Jetbrains-Recent-Plugin/bin/* -Recurse -Include *.xml, *.pdb, PowerToys.*, Wox.*
-          Rename-Item -Path Jetbrains-Recent-Plugin/bin/${{matrix.platform}}/Release -NewName $env:PLUGIN_NAME
+          Rename-Item -Path Jetbrains-Recent-Plugin/bin/${{matrix.platform}}/Release/net8.0-windows -NewName $env:PLUGIN_NAME
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
