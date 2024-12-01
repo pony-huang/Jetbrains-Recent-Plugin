@@ -125,7 +125,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                 Title = rp.ProjectPath,
                 SubTitle = $"Last Open: {formattedDate}",
                 QueryTextDisplay = string.Empty,
-                IcoPath = $"Images/{rp.DeveloperTool}.png",
+                IcoPath = $"Images/{rp.DeveloperToolIcon}.png",
                 Action = action =>
                 {
                     if (!Cmd.Equals(""))

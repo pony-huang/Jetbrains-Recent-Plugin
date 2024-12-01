@@ -20,22 +20,21 @@
 
   <ItemGroup>
     <Reference Include="PowerToys.Common.UI">
-      <HintPath>..\..\Lib\PowerToys.Common.UI.dll</HintPath>
+      <HintPath>.\Lib\PowerToys.Common.UI.dll</HintPath>
     </Reference>
     <Reference Include="PowerToys.ManagedCommon">
-      <HintPath>..\..\Lib\PowerToys.ManagedCommon.dll</HintPath>
+      <HintPath>.\Lib\PowerToys.ManagedCommon.dll</HintPath>
     </Reference>
     <Reference Include="PowerToys.Settings.UI.Lib">
-      <HintPath>..\..\Lib\PowerToys.Settings.UI.Lib.dll</HintPath>
+      <HintPath>.\Lib\PowerToys.Settings.UI.Lib.dll</HintPath>
     </Reference>
     <Reference Include="Wox.Infrastructure">
-      <HintPath>..\..\Lib\Wox.Infrastructure.dll</HintPath>
+      <HintPath>.\Lib\Wox.Infrastructure.dll</HintPath>
     </Reference>
     <Reference Include="Wox.Plugin">
-      <HintPath>..\..\Lib\Wox.Plugin.dll</HintPath>
+      <HintPath>.\Lib\Wox.Plugin.dll</HintPath>
     </Reference>
   </ItemGroup>
-
 
   <ItemGroup>
     <ProjectReference Include="..\JetBrains-Recent-Plugin\JetBrains-Recent-Plugin.csproj" />
