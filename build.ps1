@@ -22,10 +22,16 @@ if (-not (Test-Path $tempDir)) {
     New-Item -ItemType Directory -Path $tempDir | Out-Null
 }
 
-
 foreach ($configuration in $configurations) {
     foreach ($platform in $platforms) {
         Write-Host "Building $projectName for $platform in $configuration configuration"
+
+        # Clean build output before starting a new build
+        $buildOutputPath = "./$workspace/bin/$platform/$configuration"
+        if (Test-Path $buildOutputPath) {
+            Write-Host "Cleaning previous build output..."
+            Remove-Item "$buildOutputPath/*" -Recurse -Force -ErrorAction Ignore
+        }
 
         # Build the project
         dotnet build -c $configuration /p:Platform=$platform
@@ -49,7 +55,7 @@ foreach ($configuration in $configurations) {
         )
 
         # Copy items to temporary directory
-        Write-Host "Copy $items"
+        Write-Host "Copying $items"
         Copy-Item $items "$tempDir" -Recurse -Force -ErrorAction Stop
         
         # Define output zip file name
