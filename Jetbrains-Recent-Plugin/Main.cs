@@ -1,18 +1,15 @@
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
-using System.Windows;
 using System.Windows.Controls;
 using Wox.Plugin;
 using Wox.Plugin.Logger;
 
 namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 {
-    public class Main : IPlugin, IPluginI18n, IContextMenu, ISettingProvider, IReloadable, IDisposable, IDelayedExecutionPlugin
+    public class Main : IPlugin, IPluginI18n, IContextMenu, ISettingProvider, IReloadable, IDisposable,
+        IDelayedExecutionPlugin
     {
         private const string Setting = nameof(Setting);
-
-        // current value of the setting
-        private bool _setting;
 
         private PluginInitContext _context;
 
@@ -26,8 +23,6 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         public static string PluginID => "5BF8F7B836D50007D3139BDF93D41B9D";
 
-        private Settings _settings = new();
-
         private Dictionary<string, string> _product;
 
         private ContextMenuLoader _contextMenuLoader;
@@ -35,37 +30,28 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         // add additional options (optional)
         public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
         {
-           //new()
-           // {
-           //     Key = nameof(PrefixSearch),
-           //     DisplayLabel = "Prefix Search",
-           //     DisplayDescription = "JetBrains Product Prefix Search",
-           //     PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
-           //     Value = PrefixSearch,
-           // }
+            new()
+            {
+                Key = nameof(IsDisplayProjectName),
+                DisplayLabel = "Show folder names only",
+                DisplayDescription = "if true else show the folder name instead of the entire folder path",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+                Value = IsDisplayProjectName,
+            }
         };
 
-        private bool PrefixSearch { get; set; }
+        private bool IsDisplayProjectName { get; set; }
 
         public void UpdateSettings(PowerLauncherPluginSettings settings)
         {
-            //PrefixSearch = settings.AdditionalOptions.SingleOrDefault(x => x.Key == nameof(PrefixSearch))?.Value ?? false;
+            IsDisplayProjectName =
+                settings.AdditionalOptions.SingleOrDefault(x => x.Key == nameof(IsDisplayProjectName))?.Value ?? false;
         }
 
         // return context menus for each Result (optional)
         public List<ContextMenuResult> LoadContextMenus(Result selectedResult)
         {
             return _contextMenuLoader.LoadContextMenus(selectedResult);
-        }
-
-        private static bool CopyToClipboard(string? value)
-        {
-            if (value != null)
-            {
-                Clipboard.SetText(value);
-            }
-
-            return true;
         }
 
         // return query results
@@ -81,7 +67,9 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             var recentProjects = JetBrainsUtils.FindJetBrainsRecentProjects();
 
             // sort by activationTimestamp
-            recentProjects.Sort((x, y) => GetValueOrDefault(y.Options, "activationTimestamp", 0).CompareTo(GetValueOrDefault(x.Options, "activationTimestamp", 0)));
+            recentProjects.Sort((x, y) =>
+                GetValueOrDefault(y.Options, "activationTimestamp", 0)
+                    .CompareTo(GetValueOrDefault(x.Options, "activationTimestamp", 0)));
 
 
             var distinctRecentProjects = recentProjects.GroupBy(p => p.ProjectPath).Select(g => g.First()).ToList();
@@ -111,26 +99,27 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         private Result CreateResultFromProject(RecentProjectInfo rp)
         {
-            string Cmd = "";
+            string cmd = "";
             if (_product.ContainsKey(rp.ProductName))
             {
-                Cmd = _product[rp.ProductName];
+                cmd = _product[rp.ProductName];
             }
+
             var timestamp = GetValueOrDefault(rp.Options, "activationTimestamp", 0);
             DateTime dateTime = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime;
             string formattedDate = dateTime.ToString("yy-MM-dd HH:mm:ss");
 
             return new Result
             {
-                Title = rp.ProjectPath,
+                Title = !IsDisplayProjectName ? rp.ProjectPath : rp.ProjectName,
                 SubTitle = $"Last Open: {formattedDate}",
                 QueryTextDisplay = string.Empty,
                 IcoPath = $"Images/{rp.DeveloperToolIcon}.png",
                 Action = action =>
                 {
-                    if (!Cmd.Equals(""))
+                    if (!cmd.Equals(""))
                     {
-                        Helper.OpenProject(rp.ProjectPath, Cmd);
+                        Helper.OpenProject(rp.ProjectPath, cmd);
                     }
 
                     return true;
@@ -139,7 +128,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                 {
                     ProductName = rp.ProductName,
                     ProjectPath = rp.ProjectPath,
-                    JetBrainsCmdPath = Cmd
+                    JetBrainsCmdPath = cmd
                 }
             };
         }
@@ -162,6 +151,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     Log.Error($"The number is too large or too small for a long. value: {value}", GetType());
                 }
             }
+
             return defaultValue;
         }
 

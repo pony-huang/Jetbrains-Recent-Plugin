@@ -29,7 +29,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                 contextMenus.Add(new ContextMenuResult
                 {
                     PluginName = Assembly.GetExecutingAssembly().GetName().Name,
-                    Title = "Copy (Enter)",
+                    Title = "Copy Path(Enter)",
                     Glyph = "\xE8C8",
                     FontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets",
                     AcceleratorKey = Key.C,

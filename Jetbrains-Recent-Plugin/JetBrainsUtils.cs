@@ -14,6 +14,8 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         public string DeveloperTool { get; set; }
         public string DeveloperToolIcon { get; set; }
         public string ProductName { get; set; }
+
+        public string ProjectName { get; set; }
         public Dictionary<string, string> Options { get; set; } = new();
 
         public bool IsLastOpenedProject { get; set; }
@@ -31,6 +33,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                    $"- Developer Tool: {DeveloperTool}\n" +
                    $"- Developer Tool Icon: {DeveloperToolIcon}\n" +
                    $"- Product Name: {ProductName}\n" +
+                   $"- Project Name: {ProductName}\n" +
                    $"- Options: [{optionsStr}]\n" +
                    $"- Is Last Opened Project: {IsLastOpenedProject}";
         }
@@ -79,7 +82,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     recentProjectsManagerNode.SelectSingleNode("option[@name='lastOpenedProject']")?.Attributes["value"]
                         ?.Value ?? string.Empty;
 
-                Log.Info("Last Opened Project: {lastOpenedProject}", typeof(JetBrainsUtils));
+                // Log.Info("Last Opened Project: {lastOpenedProject}", typeof(JetBrainsUtils));
 
                 foreach (XmlNode entryNode in entryNodes)
                 {
@@ -87,6 +90,8 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     var projectPath = entryNode.Attributes["key"]?.Value ?? "N/A";
                     var projectInfoNode = entryNode.SelectSingleNode("value/RecentProjectMetaInfo");
                     if (projectInfoNode == null) continue;
+
+                    var projectName = projectPath.Substring(projectPath.LastIndexOf("/") + 1);
 
                     var opened = "N/A";
                     if (projectInfoNode.Attributes != null)
@@ -100,6 +105,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     {
                         Opened = opened,
                         ProjectPath = projectPath,
+                        ProjectName = projectName,
                         ProjectWorkspaceId = projectWorkspaceId,
                         IsLastOpenedProject = projectPath == lastOpenedProject,
                     };
