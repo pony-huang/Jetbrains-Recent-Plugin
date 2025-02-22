@@ -44,7 +44,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         private static readonly HashSet<string> Producers = new()
         {
             "idea64.exe", "pycharm64.exe", "clion64.exe", "goland64.exe", "rider64.exe",
-            "appcode64.exe", "dataspell64.exe", "fleet64.exe", "phpstorm.png", "rubymine64.exe",
+            "appcode64.exe", "dataspell64.exe", "fleet64.exe", "phpstorm.exe", "rubymine64.exe",
             "webstorm64.exe"
         };
 
