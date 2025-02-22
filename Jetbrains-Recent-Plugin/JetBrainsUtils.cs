@@ -162,13 +162,19 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
                     if (projectInfo.Options.Count > 0)
                     {
-                        var productionCode = projectInfo.Options["productionCode"];
-                        projectInfo.ProductIcon =
-                            CODE_PRODUCT_ICON_DICT.GetValueOrDefault(productionCode, "ideac.png");
-                        projectInfo.ProductCodeName =
-                            CODE_PRODUCT_DICT.GetValueOrDefault(productionCode, "Unknown");
-                        projectInfo.ProjectOpenTimestamp = long.Parse(projectInfo.Options["projectOpenTimestamp"]);
-                        projectInfo.ActivationTimestamp = long.Parse(projectInfo.Options["activationTimestamp"]);
+                        if (projectInfo.Options.TryGetValue("productionCode", out var productionCode))
+                        {
+                            projectInfo.ProductIcon = CODE_PRODUCT_ICON_DICT.GetValueOrDefault(productionCode, "ideac.png");
+                            projectInfo.ProductCodeName = CODE_PRODUCT_DICT.GetValueOrDefault(productionCode, "Unknown");
+                        }
+                        if (projectInfo.Options.TryGetValue("projectOpenTimestamp", out var projectOpenTimestampStr))
+                        {
+                            projectInfo.ProjectOpenTimestamp = long.Parse(projectOpenTimestampStr);
+                        }
+                        if (projectInfo.Options.TryGetValue("activationTimestamp", out var activationTimestampStr))
+                        {
+                            projectInfo.ActivationTimestamp = long.Parse(activationTimestampStr);
+                        }
                     }
 
 
