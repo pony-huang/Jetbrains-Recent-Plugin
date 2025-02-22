@@ -59,7 +59,7 @@ foreach ($configuration in $configurations) {
         Copy-Item $items "$tempDir" -Recurse -Force -ErrorAction Stop
         
         # Define output zip file name
-        $outputZip = "./$($projectName)/out/$($projectName)-$($configuration)-$platform.zip"
+        $outputZip = "./$($projectName)/out/$($projectName)_$($configuration)_$platform.zip"
         # Compress the directory
         Compress-Archive -Path "$tempDir/*" -DestinationPath $outputZip -Force
     }

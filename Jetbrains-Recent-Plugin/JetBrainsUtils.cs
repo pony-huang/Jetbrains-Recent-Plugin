@@ -11,10 +11,11 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         public string ProjectPath { get; set; }
         public string Opened { get; set; }
         public string ProjectWorkspaceId { get; set; }
-        public string DeveloperTool { get; set; }
-        public string DeveloperToolIcon { get; set; }
+        public string ProductIcon { get; set; }
         public string ProductName { get; set; }
-
+        public long ProjectOpenTimestamp { get; set; }
+        public long ActivationTimestamp { get; set; }
+        public string ProductCodeName { get; set; }
         public string ProjectName { get; set; }
         public Dictionary<string, string> Options { get; set; } = new();
 
@@ -30,8 +31,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                    $"- Project Path: {ProjectPath}\n" +
                    $"- Opened: {Opened}\n" +
                    $"- Workspace ID: {ProjectWorkspaceId}\n" +
-                   $"- Developer Tool: {DeveloperTool}\n" +
-                   $"- Developer Tool Icon: {DeveloperToolIcon}\n" +
+                   $"- Developer Tool Icon: {ProductIcon}\n" +
                    $"- Product Name: {ProductName}\n" +
                    $"- Project Name: {ProductName}\n" +
                    $"- Options: [{optionsStr}]\n" +
@@ -44,14 +44,49 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         private static readonly HashSet<string> Producers = new()
         {
             "idea64.exe", "pycharm64.exe", "clion64.exe", "goland64.exe", "rider64.exe",
-            "appcode64.exe", "dataspell64.exe", "fleet64.exe", "phpstorm.exe", "rubymine64.exe",
+            "appcode64.exe", "dataspell64.exe", "fleet64.exe", "phpstorm64.exe", "rubymine64.exe",
             "webstorm64.exe"
         };
 
-        private static readonly List<string> IconTypes = new()
+        private static readonly Dictionary<string, string> CODE_PRODUCT_ICON_DICT = new()
         {
-            "idea", "pycharm", "clion", "goland", "rider",
-            "appcode", "dataspell", "fleet", "phpstorm", "rubymine", "webstorm"
+            { "IC", "ideac.png" },
+            { "IE", "idea.png" },
+            { "PS", "phpstorm.png" },
+            { "WS", "webstorm.png" },
+            { "PY", "pycharm.png" },
+            { "PC", "pycharmc.png" },
+            { "PE", "pycharmc.png" },
+            { "RM", "rubymine.png" },
+            { "OC", "appcode.png" },
+            { "CL", "clion.png" },
+            { "GO", "goland.png" },
+            // { "DB", "DataGrip" },
+            { "RD", "rider.png" },
+            // { "AI", "Android Studio" },
+            { "RR", "rustrover.png" },
+            // { "QA", "Aqua" }
+        };
+
+        private static readonly Dictionary<string, string> CODE_PRODUCT_DICT = new Dictionary<string, string>()
+        {
+            { "IU", "IntelliJ IDEA Ultimate" },
+            { "IC", "IntelliJ IDEA Community" },
+            { "IE", "IntelliJ IDEA Educational" },
+            { "PS", "PhpStorm" },
+            { "WS", "WebStorm" },
+            { "PY", "PyCharm Professional" },
+            { "PC", "PyCharm Community" },
+            { "PE", "PyCharm Educational" },
+            { "RM", "RubyMine" },
+            { "OC", "AppCode" },
+            { "CL", "CLion" },
+            { "GO", "GoLand" },
+            { "DB", "DataGrip" },
+            { "RD", "Rider" },
+            { "AI", "Android Studio" },
+            { "RR", "RustRover" },
+            { "QA", "Aqua" }
         };
 
 
@@ -125,6 +160,18 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                         projectInfo.Options[optionName] = optionValue;
                     }
 
+                    if (projectInfo.Options.Count > 0)
+                    {
+                        var productionCode = projectInfo.Options["productionCode"];
+                        projectInfo.ProductIcon =
+                            CODE_PRODUCT_ICON_DICT.GetValueOrDefault(productionCode, "ideac.png");
+                        projectInfo.ProductCodeName =
+                            CODE_PRODUCT_DICT.GetValueOrDefault(productionCode, "Unknown");
+                        projectInfo.ProjectOpenTimestamp = long.Parse(projectInfo.Options["projectOpenTimestamp"]);
+                        projectInfo.ActivationTimestamp = long.Parse(projectInfo.Options["activationTimestamp"]);
+                    }
+
+
                     projectInfos.Add(projectInfo);
                 }
             }
@@ -150,15 +197,11 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     if (!File.Exists(recentProjectsPath)) continue;
 
                     var productName = Path.GetFileName(dir);
-                    var devToolName = GetDevToolName(productName);
 
                     var parsedProjects = ParseRecentProjectsXml(recentProjectsPath);
                     foreach (var project in parsedProjects)
                     {
                         project.ProductName = productName;
-                        project.DeveloperToolIcon = string.IsNullOrEmpty(devToolName)
-                            ? productName.ToLower()
-                            : devToolName.ToLower();
                     }
 
                     projects.AddRange(parsedProjects);
@@ -168,11 +211,6 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             return projects;
         }
 
-        private static string GetDevToolName(string productName)
-        {
-            return IconTypes.FirstOrDefault(value => productName.Contains(value, StringComparison.OrdinalIgnoreCase)) ??
-                   string.Empty;
-        }
 
         public static Dictionary<string, string> FindJetBrainsProducts()
         {

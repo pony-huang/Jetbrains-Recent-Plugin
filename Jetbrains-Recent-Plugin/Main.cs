@@ -1,6 +1,7 @@
 using ManagedCommon;
 using Microsoft.PowerToys.Settings.UI.Library;
 using System.Windows.Controls;
+using Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Properties;
 using Wox.Plugin;
 using Wox.Plugin.Logger;
 
@@ -17,9 +18,9 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         private bool _disposed;
 
-        public string Name => Properties.Resources.plugin_name;
+        public string Name => Resources.plugin_name;
 
-        public string Description => Properties.Resources.plugin_description;
+        public string Description => Resources.plugin_description;
 
         public static string PluginID => "5BF8F7B836D50007D3139BDF93D41B9D";
 
@@ -37,15 +38,28 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                 DisplayDescription = "if true else show the folder name instead of the entire folder path",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
                 Value = IsDisplayProjectName,
+            },
+            new()
+            {
+                Key = nameof(IsDisplayProjectOpenLastTime),
+                DisplayLabel = "Last project opening time",
+                DisplayDescription = "if true else show project last project opening time",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+                Value = IsDisplayProjectOpenLastTime,
             }
         };
 
         private bool IsDisplayProjectName { get; set; }
 
+        private bool IsDisplayProjectOpenLastTime { get; set; }
+
         public void UpdateSettings(PowerLauncherPluginSettings settings)
         {
             IsDisplayProjectName =
                 settings.AdditionalOptions.SingleOrDefault(x => x.Key == nameof(IsDisplayProjectName))?.Value ?? false;
+            IsDisplayProjectOpenLastTime =
+                settings.AdditionalOptions.SingleOrDefault(x => x.Key == nameof(IsDisplayProjectOpenLastTime))?.Value ??
+                false;
         }
 
         // return context menus for each Result (optional)
@@ -105,16 +119,24 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                 cmd = _product[rp.ProductName];
             }
 
-            var timestamp = GetValueOrDefault(rp.Options, "activationTimestamp", 0);
-            DateTime dateTime = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).DateTime;
-            string formattedDate = dateTime.ToString("yy-MM-dd HH:mm:ss");
+            string subTitle = "";
+            if (!IsDisplayProjectOpenLastTime)
+            {
+                subTitle += $"{rp.ProductCodeName}";
+            }
+            else
+            {
+                DateTime dateTime = DateTimeOffset.FromUnixTimeMilliseconds(rp.ActivationTimestamp).DateTime;
+                string formattedDate = dateTime.ToString("yy-MM-dd HH:mm:ss");
+                subTitle += $"{rp.ProductCodeName} {formattedDate}";
+            }
 
             return new Result
             {
                 Title = !IsDisplayProjectName ? rp.ProjectPath : rp.ProjectName,
-                SubTitle = $"Last Open: {formattedDate}",
+                SubTitle = subTitle,
                 QueryTextDisplay = string.Empty,
-                IcoPath = $"Images/{rp.DeveloperToolIcon}.png",
+                IcoPath = $"Images/{rp.ProductIcon}",
                 Action = action =>
                 {
                     if (!cmd.Equals(""))
@@ -182,12 +204,12 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         public string GetTranslatedPluginTitle()
         {
-            return Properties.Resources.plugin_name;
+            return Resources.plugin_name;
         }
 
         public string GetTranslatedPluginDescription()
         {
-            return Properties.Resources.plugin_description;
+            return Resources.plugin_description;
         }
 
         private void OnThemeChanged(Theme oldtheme, Theme newTheme)
