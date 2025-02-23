@@ -39,12 +39,9 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Tests
                 GetValueOrDefault(y.Options, "activationTimestamp", 0)
                     .CompareTo(GetValueOrDefault(x.Options, "activationTimestamp", 0)));
 
+            // recentProjects = recentProjects.GroupBy(p => p.ProjectPath).Select(g => g.First()).ToList();
 
-            var distinctRecentProjects = recentProjects.GroupBy(p => p.ProjectPath).Select(g => g.First()).ToList();
-            Console.WriteLine($"affter count: {distinctRecentProjects.Count()}");
-
-
-            foreach (var item in distinctRecentProjects)
+            foreach (var item in recentProjects)
             {
                 Console.WriteLine(item);
             }

@@ -86,11 +86,11 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     .CompareTo(GetValueOrDefault(x.Options, "activationTimestamp", 0)));
 
 
-            var distinctRecentProjects = recentProjects.GroupBy(p => p.ProjectPath).Select(g => g.First()).ToList();
+            // recentProjects = recentProjects.GroupBy(p => p.ProjectPath).Select(g => g.First()).ToList();
 
             if (string.IsNullOrEmpty(search))
             {
-                foreach (var rp in distinctRecentProjects)
+                foreach (var rp in recentProjects)
                 {
                     results.Add(CreateResultFromProject(rp));
                 }
@@ -99,7 +99,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             }
 
             // Search by project path
-            var filteredProjects = distinctRecentProjects
+            var filteredProjects = recentProjects
                 .Where(rp => rp.ProjectPath.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0)
                 .ToList();
 

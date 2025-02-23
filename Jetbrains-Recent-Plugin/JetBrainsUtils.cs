@@ -31,7 +31,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                    $"- Project Path: {ProjectPath}\n" +
                    $"- Opened: {Opened}\n" +
                    $"- Workspace ID: {ProjectWorkspaceId}\n" +
-                   $"- Developer Tool Icon: {ProductIcon}\n" +
+                   $"- Product Icon: {ProductIcon}\n" +
                    $"- Product Name: {ProductName}\n" +
                    $"- Project Name: {ProductName}\n" +
                    $"- Options: [{optionsStr}]\n" +
@@ -45,8 +45,28 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         {
             "idea64.exe", "pycharm64.exe", "clion64.exe", "goland64.exe", "rider64.exe",
             "appcode64.exe", "dataspell64.exe", "fleet64.exe", "phpstorm64.exe", "rubymine64.exe",
-            "webstorm64.exe"
+            "webstorm64.exe", "studio64.exe"
         };
+
+        // private static readonly Dictionary<string, string> CODE_PRODUCT_EXE_DICT = new()
+        // {
+        //     { "IC", "idea64.exe" },
+        //     { "IE", "idea64.exe" },
+        //     { "PS", "phpstorm64.exe" },
+        //     { "WS", "webstorm64.exe" },
+        //     { "PY", "pycharm64.exe" },
+        //     { "PC", "pycharm64.exe" },
+        //     { "PE", "pycharm64.exe" },
+        //     { "RM", "rubymine64.exe" },
+        //     { "OC", "appcode64.exe" },
+        //     { "CL", "clion64.exe" },
+        //     { "GO", "goland64.exe" },
+        //     // { "DB", "DataGrip" },
+        //     { "RD", "rider64.exe" },
+        //     { "AI", "studio64.exe" },
+        //     { "RR", "rustrover64.exe" },
+        //     // { "QA", "Aqua" }
+        // };
 
         private static readonly Dictionary<string, string> CODE_PRODUCT_ICON_DICT = new()
         {
@@ -63,7 +83,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             { "GO", "goland.png" },
             // { "DB", "DataGrip" },
             { "RD", "rider.png" },
-            // { "AI", "Android Studio" },
+            { "AI", "androidstudio.png" },
             { "RR", "rustrover.png" },
             // { "QA", "Aqua" }
         };
@@ -191,9 +211,17 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         public static List<RecentProjectInfo> FindJetBrainsRecentProjects()
         {
+            var findRecentProjects = FindRecentProjects("JetBrains");
+            var findGoogleRecentProjects = FindRecentProjects("Google");
+            findRecentProjects.AddRange(findGoogleRecentProjects);
+            return findRecentProjects;
+        }
+
+        private static List<RecentProjectInfo> FindRecentProjects(string filename)
+        {
             var projects = new List<RecentProjectInfo>();
             var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var jetBrainsFolderPath = Path.Combine(roamingPath, "JetBrains");
+            var jetBrainsFolderPath = Path.Combine(roamingPath, filename);
 
             if (Directory.Exists(jetBrainsFolderPath))
             {
@@ -217,13 +245,19 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             return projects;
         }
 
-
         public static Dictionary<string, string> FindJetBrainsProducts()
         {
             var products = new Dictionary<string, string>();
             var localPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var jetBrainsFolderPath = Path.Combine(localPath, "JetBrains");
 
+            findExePath(Path.Combine(localPath, "JetBrains"), products);
+            findExePath(Path.Combine(localPath, "Google"), products);
+
+            return products;
+        }
+
+        private static void findExePath(string jetBrainsFolderPath, Dictionary<string, string> products)
+        {
             if (Directory.Exists(jetBrainsFolderPath))
             {
                 foreach (var dir in Directory.GetDirectories(jetBrainsFolderPath))
@@ -258,8 +292,6 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     }
                 }
             }
-
-            return products;
         }
     }
 }
