@@ -39,6 +39,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         }
     }
 
+
     public class JetBrainsUtils
     {
         private static readonly HashSet<string> Producers = new()
@@ -110,7 +111,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
         };
 
 
-        private static List<RecentProjectInfo> ParseRecentProjectsXml(string filePath)
+        private static List<RecentProjectInfo> ParseRecentProjectsXml(string filePath, Boolean isRider = false)
         {
             var projectInfos = new List<RecentProjectInfo>();
 
@@ -121,8 +122,16 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(filePath);
+            XmlNode recentProjectsManagerNode;
+            if (isRider)
+            {
+                recentProjectsManagerNode = xmlDoc.SelectSingleNode("//component[@name='RiderRecentProjectsManager']");
+            }
+            else
+            {
+                recentProjectsManagerNode = xmlDoc.SelectSingleNode("//component[@name='RecentProjectsManager']");
+            }
 
-            var recentProjectsManagerNode = xmlDoc.SelectSingleNode("//component[@name='RecentProjectsManager']");
             if (recentProjectsManagerNode == null) return projectInfos;
 
             var additionalInfoNode = recentProjectsManagerNode.SelectSingleNode("option[@name='additionalInfo']/map");
@@ -136,8 +145,6 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                 var lastOpenedProject =
                     recentProjectsManagerNode.SelectSingleNode("option[@name='lastOpenedProject']")?.Attributes["value"]
                         ?.Value ?? string.Empty;
-
-                // Log.Info("Last Opened Project: {lastOpenedProject}", typeof(JetBrainsUtils));
 
                 foreach (XmlNode entryNode in entryNodes)
                 {
@@ -184,13 +191,17 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     {
                         if (projectInfo.Options.TryGetValue("productionCode", out var productionCode))
                         {
-                            projectInfo.ProductIcon = CODE_PRODUCT_ICON_DICT.GetValueOrDefault(productionCode, "ideac.png");
-                            projectInfo.ProductCodeName = CODE_PRODUCT_DICT.GetValueOrDefault(productionCode, "Unknown");
+                            projectInfo.ProductIcon =
+                                CODE_PRODUCT_ICON_DICT.GetValueOrDefault(productionCode, "ideac.png");
+                            projectInfo.ProductCodeName =
+                                CODE_PRODUCT_DICT.GetValueOrDefault(productionCode, "Unknown");
                         }
+
                         if (projectInfo.Options.TryGetValue("projectOpenTimestamp", out var projectOpenTimestampStr))
                         {
                             projectInfo.ProjectOpenTimestamp = long.Parse(projectOpenTimestampStr);
                         }
+
                         if (projectInfo.Options.TryGetValue("activationTimestamp", out var activationTimestampStr))
                         {
                             projectInfo.ActivationTimestamp = long.Parse(activationTimestampStr);
@@ -211,28 +222,69 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
 
         public static List<RecentProjectInfo> FindJetBrainsRecentProjects()
         {
-            var findRecentProjects = FindRecentProjects("JetBrains");
-            var findGoogleRecentProjects = FindRecentProjects("Google");
+            var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            // var ideaProperties = GetCustomIdeaConfigPath(Path.Combine(roamingPath, "JetBrains"));
+            var ideaProperties = new Dictionary<string, string>();
+            var findRecentProjects = FindRecentProjects(Path.Combine(roamingPath, "JetBrains"), ideaProperties);
+            var findGoogleRecentProjects = FindRecentProjects(Path.Combine(roamingPath, "Google"), ideaProperties);
             findRecentProjects.AddRange(findGoogleRecentProjects);
             return findRecentProjects;
         }
 
-        private static List<RecentProjectInfo> FindRecentProjects(string filename)
+        private static Dictionary<String, String> GetCustomIdeaConfigPath(string roamingPath)
         {
-            var projects = new List<RecentProjectInfo>();
-            var roamingPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var jetBrainsFolderPath = Path.Combine(roamingPath, filename);
+            var pathDictionary = new Dictionary<String, String>();
 
-            if (Directory.Exists(jetBrainsFolderPath))
+            if (Directory.Exists(roamingPath))
             {
-                foreach (var dir in Directory.GetDirectories(jetBrainsFolderPath))
+                foreach (var dir in Directory.GetDirectories(roamingPath))
                 {
-                    var recentProjectsPath = Path.Combine(dir, "options", "recentProjects.xml");
-                    if (!File.Exists(recentProjectsPath)) continue;
+                    var propertiesFilePath = Path.Combine(dir, "idea.properties");
+                    if (!File.Exists(propertiesFilePath)) continue;
+                    var properties = PropertiesParser.ParseProperties(propertiesFilePath);
+
+                    if (!properties.ContainsKey("idea.config.path")) continue;
 
                     var productName = Path.GetFileName(dir);
+                    // todo not support Java system property, sush as idea.config.path=${user.home}/MyIdeaConfiguration
+                    pathDictionary.Add(productName, properties["idea.config.path"]);
+                }
+            }
 
-                    var parsedProjects = ParseRecentProjectsXml(recentProjectsPath);
+            return pathDictionary;
+        }
+
+        private static List<RecentProjectInfo> FindRecentProjects(string roamingPath, Dictionary<String, String> customIdeaConfigPath)
+        {
+            var projects = new List<RecentProjectInfo>();
+
+            if (Directory.Exists(roamingPath))
+            {
+                foreach (var dir in Directory.GetDirectories(roamingPath))
+                {
+                    var productName = Path.GetFileName(dir);
+                    var recentProjectsPath = "";
+                    Boolean isRider = productName.ToLower().Contains("rider");
+
+                    if (!customIdeaConfigPath.ContainsKey(productName))
+                    {
+                         if(isRider)
+                         {
+                             recentProjectsPath = Path.Combine(dir, "options", "recentSolutions.xml");
+                         }
+                         else
+                         {
+                             recentProjectsPath = Path.Combine(dir, "options", "recentProjects.xml");
+                         }
+                    }
+                    else
+                    {
+                        recentProjectsPath = customIdeaConfigPath.GetValueOrDefault(productName, "");
+                    }
+
+                    if (!recentProjectsPath.Equals("") && !File.Exists(recentProjectsPath)) continue;
+
+                    var parsedProjects = ParseRecentProjectsXml(recentProjectsPath, isRider);
                     foreach (var project in parsedProjects)
                     {
                         project.ProductName = productName;
@@ -250,13 +302,13 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             var products = new Dictionary<string, string>();
             var localPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-            findExePath(Path.Combine(localPath, "JetBrains"), products);
-            findExePath(Path.Combine(localPath, "Google"), products);
+            FindExePath(Path.Combine(localPath, "JetBrains"), products);
+            FindExePath(Path.Combine(localPath, "Google"), products);
 
             return products;
         }
 
-        private static void findExePath(string jetBrainsFolderPath, Dictionary<string, string> products)
+        private static void FindExePath(string jetBrainsFolderPath, Dictionary<string, string> products)
         {
             if (Directory.Exists(jetBrainsFolderPath))
             {
@@ -292,6 +344,57 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
                     }
                 }
             }
+        }
+
+
+
+        private class PropertiesParser
+        {
+            public static Dictionary<string, string> ParseProperties(string filePath)
+            {
+                var properties = new Dictionary<string, string>();
+
+                try
+                {
+                    if (!File.Exists(filePath))
+                    {
+                        return properties;
+                    }
+
+                    using (var reader = new StreamReader(filePath))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            line = line.Trim();
+
+                            // Skip empty lines and comments
+                            if (string.IsNullOrEmpty(line) || line.StartsWith("#") || line.StartsWith(";"))
+                            {
+                                continue;
+                            }
+
+                            // Find the first equals sign
+                            int equalsIndex = line.IndexOf('=');
+
+                            if (equalsIndex > 0)
+                            {
+                                string key = line.Substring(0, equalsIndex).Trim();
+                                string value = line.Substring(equalsIndex + 1).Trim();
+
+                                properties[key] = value;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Info($"Error to parse properties: {ex.Message}", typeof(PropertiesParser));
+                }
+
+                return properties;
+            }
+
         }
     }
 }

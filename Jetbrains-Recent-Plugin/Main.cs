@@ -81,12 +81,7 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             var recentProjects = JetBrainsUtils.FindJetBrainsRecentProjects();
 
             // sort by activationTimestamp
-            recentProjects.Sort((x, y) =>
-                GetValueOrDefault(y.Options, "activationTimestamp", 0)
-                    .CompareTo(GetValueOrDefault(x.Options, "activationTimestamp", 0)));
-
-
-            // recentProjects = recentProjects.GroupBy(p => p.ProjectPath).Select(g => g.First()).ToList();
+            recentProjects.Sort((x, y) => y.ActivationTimestamp.CompareTo(x.ActivationTimestamp));
 
             if (string.IsNullOrEmpty(search))
             {
