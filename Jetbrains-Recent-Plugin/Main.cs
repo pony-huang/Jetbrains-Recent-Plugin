@@ -150,27 +150,6 @@ namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin
             };
         }
 
-        private long GetValueOrDefault(Dictionary<string, string> dict, string key, long defaultValue)
-        {
-            if (dict.TryGetValue(key, out string value))
-            {
-                try
-                {
-                    long number = long.Parse(value);
-                    return number;
-                }
-                catch (FormatException)
-                {
-                    Log.Error($"The string is not in a valid format. value: {value}", GetType());
-                }
-                catch (OverflowException)
-                {
-                    Log.Error($"The number is too large or too small for a long. value: {value}", GetType());
-                }
-            }
-
-            return defaultValue;
-        }
 
         // return delayed query results (optional)
         public List<Result> Query(Query query, bool delayedExecution)

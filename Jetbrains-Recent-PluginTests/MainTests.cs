@@ -1,10 +1,19 @@
-﻿using Wox.Plugin.Logger;
+﻿using System.Diagnostics;
+using Wox.Infrastructure;
+using Wox.Plugin.Logger;
 
 namespace Community.PowerToys.Run.Plugin.JetBrains_Recent_Plugin.Tests
 {
     [TestClass()]
     public class MainTests
     {
+        
+        [TestMethod]
+        public void FindJetBrainsProductsTest()
+        {
+            string folderPath = "E:/workplace/JetBrains-Recent-Plugin/Jetbrains-Recent-Plugin.sln";
+            Helper.OpenProjectInExplorer(folderPath);
+        }
         [TestMethod()]
         public void UserRoamingTest()
         {
